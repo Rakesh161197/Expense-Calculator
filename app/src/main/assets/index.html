@@ -1,0 +1,1957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monthly Expense - PRAN BEVERAGE INDIA PVT. LTD.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="/assets/exceljs.min.js"></script>
+<script src="/assets/jspdf.umd.min.js"></script>
+<script src="/assets/jspdf.plugin.autotable.min.js"></script>
+<style>
+[hidden], button[hidden], #cancel-edit[hidden] {
+  display: none !important;
+}
+:root {
+  --primary: #1d4ed8;
+  --primary-hover: #1e40af;
+  --primary-active: #1e3a8a;
+  --primary-light: #eff6ff;
+  --primary-border: #bfdbfe;
+  --bg-page: #f8fafc;
+  --card-bg: #ffffff;
+  --border-color: #e2e8f0;
+  --border-focus: #3b82f6;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-sub: #475569;
+  --radius: 12px;
+  --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 16px 12px;
+  font-family: var(--font-family);
+  color: var(--text-main);
+  background-color: var(--bg-page);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header & Panels */
+.header-brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 16px;
+}
+
+.brand-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-box {
+  width: 44px;
+  height: 44px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(29, 78, 216, 0.25);
+}
+
+.brand-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.brand-subtitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.panel {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.muted {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* Grids & Forms */
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-sub);
+  margin-bottom: 6px;
+}
+
+input, select {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text-main);
+  background-color: #ffffff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-height: 42px;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+input[readonly], select:disabled {
+  background-color: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
+  border-color: #e2e8f0;
+}
+
+/* Buttons & Actions */
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: var(--text-main);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 42px;
+  white-space: nowrap;
+}
+
+button:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+}
+
+button.primary {
+  background-color: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 1px 2px rgba(29, 78, 216, 0.2);
+}
+
+button.primary:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+button.primary:active {
+  background-color: var(--primary-active);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  align-items: center;
+}
+
+/* KPI Stats */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.stat {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-primary {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  color: #ffffff;
+  border: none;
+}
+
+.stat-primary .muted {
+  color: #bfdbfe;
+}
+
+.stat-primary strong {
+  color: #ffffff;
+}
+
+.stat .muted {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat strong {
+  display: block;
+  font-size: 24px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  margin-top: 6px;
+  color: var(--text-main);
+  letter-spacing: -0.5px;
+}
+
+/* Table */
+.table-wrap {
+  overflow-x: auto;
+  border: 1.5px solid #64748b;
+  border-radius: 8px;
+  background: #ffffff;
+  -webkit-overflow-scrolling: touch;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 950px;
+  font-size: 12.5px;
+  border: 1px solid #64748b;
+}
+
+th, td {
+  border: 1px solid #94a3b8;
+  padding: 10px 12px;
+  text-align: center;
+}
+
+th {
+  background: #f1f5f9;
+  font-weight: 700;
+  color: var(--text-main);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  border: 1px solid #64748b;
+  border-bottom: 2px solid #334155;
+}
+
+tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+tbody td {
+  border: 1px solid #cbd5e1;
+}
+
+.total-cell {
+  background: #eff6ff !important;
+  color: var(--primary) !important;
+  font-weight: 700 !important;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid #94a3b8 !important;
+}
+
+tfoot {
+  font-weight: 700;
+  background: #f1f5f9;
+  font-variant-numeric: tabular-nums;
+}
+
+tfoot td {
+  padding: 12px;
+  border: 1px solid #64748b;
+  border-top: 2px solid #334155;
+}
+
+.status {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 12px;
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #f1f5f9;
+}
+
+.status::before {
+  content: "ℹ";
+  display: inline-block;
+  color: var(--primary);
+  font-weight: bold;
+}
+
+.empty {
+  text-align: center;
+  padding: 36px 16px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.form-title {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  body {
+    padding: 10px 8px;
+  }
+  .panel {
+    padding: 14px;
+    border-radius: 10px;
+  }
+  .fields {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .stats {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .stat {
+    padding: 12px 16px;
+  }
+  .stat strong {
+    font-size: 20px;
+  }
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .actions button {
+    width: 100%;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Print Stylesheet */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm;
+  }
+  body {
+    padding: 0;
+    background: white;
+    color: black;
+    font-size: 9pt;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .panel {
+    border: 1px solid #cbd5e1;
+    padding: 8px;
+    margin: 0 0 10px;
+    box-shadow: none;
+  }
+  .fields {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px 12px !important;
+  }
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .stat {
+    border: 1px solid #cbd5e1;
+    padding: 6px 10px;
+    box-shadow: none;
+  }
+  .stat-primary {
+    background: #f1f5f9 !important;
+    color: black !important;
+    border: 1px solid #cbd5e1;
+  }
+  .stat-primary strong, .stat-primary .muted {
+    color: black !important;
+  }
+  .stat strong {
+    font-size: 14px;
+  }
+  .table-wrap {
+    overflow: visible;
+    border: 1px solid #cbd5e1;
+  }
+  table {
+    min-width: 0;
+    width: 100%;
+    font-size: 8pt;
+    border-collapse: collapse !important;
+    border: 1px solid #000000 !important;
+  }
+  th, td {
+    padding: 4px 6px;
+    border: 1px solid #000000 !important;
+  }
+  th {
+    background: #f1f5f9 !important;
+    border: 1px solid #000000 !important;
+  }
+  tfoot td {
+    border: 1px solid #000000 !important;
+  }
+  .total-cell {
+    background: #f1f5f9 !important;
+    color: black !important;
+    border: 1px solid #000000 !important;
+  }
+}
+
+/* Export Modal Styles for Android APK and Web */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.18s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.modal-card {
+  background: #ffffff;
+  border-radius: 16px;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+  border: 1px solid #cbd5e1;
+  overflow: hidden;
+  animation: slideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes slideUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+.modal-icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+}
+.modal-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+}
+.modal-subtitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  word-break: break-all;
+}
+.modal-close-icon {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px 8px;
+  min-height: auto;
+  border-radius: 6px;
+}
+.modal-close-icon:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+.modal-body {
+  padding: 18px 20px;
+}
+.modal-file-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.modal-tag {
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.modal-hint {
+  font-size: 12px;
+  color: #64748b;
+}
+.modal-actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.modal-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 46px;
+  box-sizing: border-box;
+}
+.modal-btn-primary {
+  background: #1d4ed8;
+  color: #ffffff !important;
+  border: 1px solid #1d4ed8;
+  box-shadow: 0 2px 4px rgba(29, 78, 216, 0.25);
+}
+.modal-btn-primary:hover {
+  background: #1e40af;
+  border-color: #1e40af;
+}
+.modal-btn-secondary {
+  background: #ffffff;
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+}
+.modal-btn-secondary:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+.modal-footer {
+  padding: 8px 20px 14px;
+  display: flex;
+  justify-content: flex-end;
+}
+.modal-dismiss-btn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 12px;
+  min-height: auto;
+}
+.modal-dismiss-btn:hover {
+  color: #0f172a;
+  background: #f1f5f9;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<section class="panel">
+ <div class="header-brand">
+  <div class="brand-badge">
+   <div>
+    <h1 class="brand-title">PRAN BEVERAGE INDIA PVT. LTD.</h1>
+    <div class="brand-subtitle">Monthly Expense</div>
+   </div>
+  </div>
+ </div>
+ <div class="fields">
+  <div class="field-group"><label for="month">Expense month</label><input id="month" type="month"></div>
+  <div class="field-group"><label for="name">Employee name</label><input id="name" value="Tarun Sharma" readonly></div>
+  <div class="field-group"><label for="empid">SR ID</label><input id="empid" value="IN13403" readonly></div>
+  <div class="field-group"><label for="designation">Designation</label><input id="designation" value="SR" readonly></div>
+  <div class="field-group"><label for="head">Head office</label><input id="head" value="Nagaur" readonly></div>
+ </div>
+</section>
+
+<section class="stats">
+ <div class="stat stat-primary"><span class="muted">Monthly total</span><strong id="grand">₹0</strong></div>
+ <div class="stat"><span class="muted">Travel days</span><strong id="days">0</strong></div>
+ <div class="stat"><span class="muted">Total kilometres</span><strong id="kms">0 km</strong></div>
+ <div class="stat"><span class="muted">Holidays</span><strong id="holidays">0</strong></div>
+ <div class="stat"><span class="muted">Leaves</span><strong id="leaves">0</strong></div>
+</section>
+
+<section class="panel no-print">
+ <h3 class="form-title" id="form-heading">Add daily expense entry</h3>
+ <p class="muted">Fill in one day's travel details and press “Save daily entry”. Saved entries appear in the record table below.</p>
+ <div class="fields">
+  <div class="field-group">
+   <label for="date-text">Date (dd/mm/yy)</label>
+   <div style="display:flex;gap:6px;align-items:stretch">
+    <input id="date-text" inputmode="numeric" placeholder="dd/mm/yy" maxlength="10" autocomplete="off">
+    <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;border:1px solid #cbd5e1;border-radius:8px;padding:0 14px;background:#ffffff;cursor:pointer;flex-shrink:0;min-height:42px" title="Pick date">
+     <span style="pointer-events:none">📅</span>
+     <input id="date" type="date" aria-label="Choose date" style="position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer">
+    </div>
+   </div>
+  </div>
+  <div class="field-group" id="from-wrap"><label for="from">From</label><select id="from"></select></div>
+  <div class="field-group" id="to-wrap"><label for="to">To</label><select id="to"><option value="">Select city</option></select></div>
+  <div class="field-group" id="sunday-merged-wrap" style="display:none;grid-column:span 2;">
+   <label>From &amp; To</label>
+   <div style="display:flex;align-items:center;justify-content:center;background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:8px;min-height:42px;font-weight:700;color:#1d4ed8;font-size:14px;letter-spacing:0.5px;">
+    Sunday
+   </div>
+  </div>
+  <div class="field-group"><label for="km">Kilometres (KM)</label><input id="km" type="number" min="0" step="any" value="0"></div>
+  <div class="field-group"><label for="local">Local conveyance (₹)</label><input id="local" type="number" min="0" step="any" value="150"></div>
+  <div class="field-group"><label for="bus">Train / Bus (₹)</label><input id="bus" type="number" min="0" step="any" placeholder="0"></div>
+  <div class="field-group"><label for="fixed">Outstation fixed (₹)</label><input id="fixed" type="number" min="0" step="any" placeholder="0"></div>
+  <div class="field-group"><label for="hotel">Hotel bill (₹)</label><input id="hotel" type="number" min="0" step="any" placeholder="0"></div>
+  <div class="field-group"><label for="remark">Remarks</label><input id="remark" type="text" placeholder="Optional remarks"></div>
+ </div>
+ <div class="actions">
+  <button class="primary" id="save-entry">Save daily entry</button>
+  <button id="reset-form" type="button">Clear form</button>
+  <button id="cancel-edit" type="button" hidden style="display:none;">Cancel edit</button>
+ </div>
+ <div class="status" id="status" aria-live="polite">Ready.</div>
+</section>
+
+<section class="panel">
+ <div class="top" style="align-items:center;margin-bottom:12px">
+  <div>
+   <strong style="font-size:15px">Saved daily records</strong>
+   <div class="muted">Only entries you save are listed here.</div>
+  </div>
+  <span class="muted" id="count" style="font-weight:600;background:#f1f5f9;padding:4px 10px;border-radius:6px">0 entries</span>
+ </div>
+ <div class="table-wrap">
+  <table>
+   <thead>
+    <tr>
+     <th>Date</th>
+     <th>From</th>
+     <th>To</th>
+     <th>KM</th>
+     <th>Local conveyance (₹)</th>
+     <th>Train / Bus (₹)</th>
+     <th>OS Fixed (₹)</th>
+     <th>Hotel bill (₹)</th>
+     <th>Total (₹)</th>
+     <th>Remarks</th>
+     <th class="no-print">Actions</th>
+    </tr>
+   </thead>
+   <tbody id="records"></tbody>
+   <tfoot>
+    <tr>
+     <td colspan="3">MONTHLY TOTAL</td>
+     <td id="km-total">0</td>
+     <td id="local-total">₹0</td>
+     <td id="bus-total">₹0</td>
+     <td id="fixed-total">₹0</td>
+     <td id="hotel-total">₹0</td>
+     <td id="footer-total" class="total-cell">₹0</td>
+     <td colspan="2"></td>
+    </tr>
+   </tfoot>
+  </table>
+ </div>
+ <div class="actions no-print">
+  <button id="save-records" class="primary">Save records</button>
+  <button id="load-records">Load saved records</button>
+  <button id="excel" class="primary" style="background:#15803d;border-color:#15803d;">Export Excel</button>
+  <button id="print">Print / Save PDF</button>
+  <button id="clear">Clear this month's records</button>
+ </div>
+</section>
+
+<!-- Export Download Modal for Android APK and Web -->
+<div id="export-modal-backdrop" class="modal-backdrop" style="display:none;" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-labelledby="modal-file-title" aria-modal="true">
+    <div class="modal-header">
+      <div class="modal-icon-badge" id="modal-icon-badge">📄</div>
+      <div style="flex:1;min-width:0;">
+        <h4 id="modal-file-title" class="modal-title">Export Ready</h4>
+        <div id="modal-file-subtitle" class="modal-subtitle">October 2026.xlsx</div>
+      </div>
+      <button type="button" id="modal-close-btn" class="modal-close-icon" aria-label="Close modal">✕</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="modal-file-info">
+        <span id="modal-file-size" class="modal-tag">Spreadsheet</span>
+        <span id="modal-status-text" class="modal-hint">File ready for download and sharing.</span>
+      </div>
+
+      <div class="modal-actions-list">
+        <a id="modal-direct-download-btn" class="modal-btn modal-btn-primary" href="#" download>
+          <span>📥</span> <span>Download File</span>
+        </a>
+        <button type="button" id="modal-share-btn" class="modal-btn modal-btn-secondary" style="display:none;">
+          <span>📤</span> <span>Share / Send File</span>
+        </button>
+        <button type="button" id="modal-preview-btn" class="modal-btn modal-btn-secondary" style="display:none;">
+          <span>👁️</span> <span>Preview / View PDF</span>
+        </button>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button type="button" id="modal-dismiss-btn" class="modal-dismiss-btn">Dismiss</button>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+(()=> {
+const $=id=>document.getElementById(id);
+const cities=['Nagaur','Mundwa','Merta City','Makrana','Kuchera','Degana','Khivsar','Choti Khatu','Jayal'];
+const special=['Sunday','Holiday','Leave'];
+const routes={'Mundwa':60,'Merta City':190,'Makrana':230,'Nagaur':0,'Kuchera':86,'Degana':170,'Khivsar':100,'Jayal':114,'Choti Khatu':160};
+const RATE=1.5,DA=150;
+function applyRoute(){const t=$('to').value;if(!t||t==='Select city'){$('km').value='0';$('local').value='0';$('bus').value='0';$('fixed').value='0';$('hotel').value='';return}if(special.includes(t)){$('km').value='0';$('local').value='0';$('bus').value='0';$('fixed').value='0';$('hotel').value='0';return}if(t==='Nagaur'){$('km').value='0';$('local').value='150';$('bus').value='0';$('fixed').value='0';return}if(t in routes){const km=routes[t];$('km').value=km;$('local').value='0';$('bus').value=+(km*RATE).toFixed(2);$('fixed').value=DA}}
+let rows=[], editing=-1, pendingDel=-1, pendingClear=false;
+const n=v=>Math.max(0,Number(v)||0), money=v=>'₹'+Math.round(v).toLocaleString('en-IN');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nowYM=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
+const mon=()=>$('month').value||nowYM();
+$('month').value=nowYM();
+const pad=x=>String(x).padStart(2,'0');
+const fmt=iso=>{const m=/^(\d{4})-(\d\d)-(\d\d)$/.exec(iso||'');return m?m[3]+'/'+m[2]+'/'+m[1].slice(2):(iso||'')};
+const parseDMY=t=>{const m=/^(\d{2})\/(\d{2})\/(\d{2}|\d{4})$/.exec(t.trim());if(!m)return '';const y=m[3].length===2?'20'+m[3]:m[3],d=new Date(+y,+m[2]-1,+m[1]);return d.getFullYear()==+y&&d.getMonth()==+m[2]-1&&d.getDate()==+m[1]?y+'-'+m[2]+'-'+m[1]:''};
+const setDate=iso=>{$('date').value=iso;$('date-text').value=fmt(iso)};
+const defDate=()=>{const t=new Date(),ym=mon();return ym===t.getFullYear()+'-'+pad(t.getMonth()+1)?ym+'-'+pad(t.getDate()):ym+'-01'};
+const isSundayDate=iso=>Boolean(iso&&new Date(iso+'T00:00:00').getDay()===0);
+const setSundayMergedUI=isSun=>{
+  if($('sunday-merged-wrap'))$('sunday-merged-wrap').style.display=isSun?'flex':'none';
+  if($('from-wrap'))$('from-wrap').style.display=isSun?'none':'flex';
+  if($('to-wrap'))$('to-wrap').style.display=isSun?'none':'flex';
+};
+function updateToOptions(selectedVal){const isSun=isSundayDate($('date').value);const items=[...[...cities].sort((a,b)=>a.localeCompare(b)),...special];const curVal=selectedVal!==undefined?selectedVal:$('to').value;$('to').innerHTML=`<option value="" ${!curVal?'selected':''}>Select city</option>`+items.map(x=>{const dis=x==='Sunday'&&!isSun;const sel=curVal===x?' selected':'';return `<option value="${esc(x)}"${dis?' disabled':''}${sel}>${esc(x)}${dis?' (Sundays only)':''}</option>`}).join('')}
+const autoDay=()=>{const iso=$('date').value;if(!iso)return;const sun=isSundayDate(iso);const currentVal=$('to').value;setSundayMergedUI(sun);if(sun){updateToOptions('Sunday');$('to').value='Sunday';$('from').value='Sunday';applyRoute()}else{if(currentVal==='Sunday'){$('to').value='';updateToOptions('');applyRoute();$('hotel').value=''}else{updateToOptions(currentVal)}$('from').value='Nagaur'}};
+const monthLabel=()=>{const [y,m]=mon().split('-');return new Date(+y,+m-1,1).toLocaleString('en-IN',{month:'long',year:'numeric'})};
+const total=r=>n(r.local)+n(r.bus)+n(r.fixed)+n(r.hotel);
+const msg=s=>$('status').textContent=s;
+function fillSelect(id,items){$(id).innerHTML=items.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('')}
+function formData(){const isSun=isSundayDate($('date').value)||$('to').value==='Sunday';return {date:$('date').value,from:isSun?'Sunday':$('from').value,to:isSun?'Sunday':$('to').value,km:$('km').value,local:$('local').value,bus:$('bus').value,fixed:$('fixed').value,hotel:$('hotel').value,remark:$('remark').value}}
+function clearForm(){editing=-1;$('form-heading').textContent='Add daily expense entry';$('save-entry').textContent='Save daily entry';$('cancel-edit').hidden=true;$('cancel-edit').style.display='none';setDate(defDate());const sun=isSundayDate($('date').value);setSundayMergedUI(sun);const targetTo=sun?'Sunday':'';updateToOptions(targetTo);$('to').value=targetTo;$('from').value=sun?'Sunday':'Nagaur';applyRoute();$('hotel').value='';$('remark').value=''}
+function setForm(r,i){editing=i;$('form-heading').textContent='Edit daily expense entry';$('save-entry').textContent='Update daily entry';$('cancel-edit').hidden=false;$('cancel-edit').style.display='inline-flex';setDate(r.date);const sun=isSundayDate(r.date)||r.to==='Sunday'||r.from==='Sunday';setSundayMergedUI(sun);if(sun){updateToOptions('Sunday');$('to').value='Sunday';$('from').value='Sunday'}else{$('from').value=r.from||'Nagaur';updateToOptions(r.to)}Object.keys(r).forEach(k=>{if($(k))$(k).value=r[k]??''});msg('Editing entry for '+fmt(r.date)+'.')}
+function update(){
+let t={km:0,local:0,bus:0,fixed:0,hotel:0,grand:0,days:0,holidays:0,leaves:0};
+rows.forEach(r=>{['km','local','bus','fixed','hotel'].forEach(k=>t[k]+=n(r[k]));t.grand+=total(r);if(!special.includes(r.to)&&!special.includes(r.from))t.days++;if(r.to==='Holiday'||r.from==='Holiday')t.holidays++;if(r.to==='Leave'||r.from==='Leave')t.leaves++});
+$('grand').textContent=money(t.grand);$('days').textContent=t.days;$('kms').textContent=t.km.toLocaleString('en-IN')+' km';
+if($('holidays'))$('holidays').textContent=t.holidays;
+if($('leaves'))$('leaves').textContent=t.leaves;
+$('km-total').textContent=t.km.toLocaleString('en-IN');$('local-total').textContent=money(t.local);$('bus-total').textContent=money(t.bus);$('fixed-total').textContent=money(t.fixed);$('hotel-total').textContent=money(t.hotel);$('footer-total').textContent=money(t.grand);
+$('count').textContent=rows.length+' entr'+(rows.length===1?'y':'ies');
+$('records').innerHTML=rows.length?rows.map((r,i)=>{const isSun=r.to==='Sunday'||r.from==='Sunday';const fromToTd=isSun?`<td colspan="2" style="font-weight:700;color:#1d4ed8;background:#eff6ff;letter-spacing:0.5px;">Sunday</td>`:`<td>${esc(r.from)}</td><td style="font-weight:600">${esc(r.to)}</td>`;return `<tr><td style="font-family:monospace;font-weight:600">${esc(fmt(r.date))}</td>${fromToTd}<td style="font-family:monospace">${esc(r.km||0)}</td><td style="font-family:monospace">${money(n(r.local))}</td><td style="font-family:monospace">${money(n(r.bus))}</td><td style="font-family:monospace">${money(n(r.fixed))}</td><td style="font-family:monospace">${money(n(r.hotel))}</td><td class="total-cell" style="font-family:monospace">${money(total(r))}</td><td>${esc(r.remark)}</td><td class="no-print"><div style="display:flex;gap:4px;justify-content:center"><button data-edit="${i}" style="padding:6px 10px;font-size:12px;min-height:30px">Edit</button><button data-delete="${i}" style="padding:6px 10px;font-size:12px;min-height:30px;${pendingDel===i?'background:#dc2626;color:#fff;border-color:#dc2626':''};">${pendingDel===i?'Confirm?':'Delete'}</button></div></td></tr>`}).join(''):'<tr><td class="empty" colspan="11">No saved daily entries yet. Add an entry using the form above.</td></tr>';
+}
+function saveToStorage(){try{localStorage.setItem('expense-sheet-'+mon(),JSON.stringify({rows,name:$('name').value,id:$('empid').value,designation:$('designation').value,fixed:150}));return true}catch(e){msg('Browser storage unavailable. Export CSV for backup.');return false}}
+function loadFromStorage(show=true){try{let s=localStorage.getItem('expense-sheet-'+mon());if(!s){rows=[];update();if(show)msg('No saved entries for '+monthLabel()+'.');return}let d=JSON.parse(s);rows=d.rows||[];update();if(show)msg('Loaded saved records for '+monthLabel()+'.')}catch(e){msg('Could not load saved records.')} }
+fillSelect('from',['Nagaur']);$('from').disabled=true;
+setDate(defDate());const initSun=isSundayDate($('date').value);const initTo=initSun?'Sunday':'';setSundayMergedUI(initSun);updateToOptions(initTo);$('to').value=initTo;$('from').value=initSun?'Sunday':'Nagaur';applyRoute();
+$('to').addEventListener('change',()=>{if($('to').value==='Sunday'&&!isSundayDate($('date').value)){msg('Sunday cannot be selected for a non-Sunday date.');$('to').value=''}applyRoute()});
+$('date-text').addEventListener('input',e=>{let d=e.target.value.replace(/\D/g,'').slice(0,8),o=d.slice(0,2);if(d.length>2)o+='/'+d.slice(2,4);if(d.length>4)o+='/'+d.slice(4);e.target.value=o;$('date').value=(d.length===6||d.length===8)?parseDMY(o):'';autoDay()});
+$('date-text').addEventListener('blur',()=>{if($('date-text').value&&!$('date').value)msg('Invalid date. Use dd/mm/yy.')});
+$('date').addEventListener('change',()=>{$('date-text').value=fmt($('date').value);autoDay()});
+if ($('pick-date')) {
+  $('pick-date').onclick = () => {
+    const d = $('date');
+    try { d.showPicker(); } catch (e) { d.focus(); d.click(); }
+  };
+}
+$('km').addEventListener('input',()=>{if(!special.includes($('to').value))$('bus').value=+(n($('km').value)*RATE).toFixed(2)});
+$('save-entry').onclick=()=>{let r=formData();if(!r.date){msg('Please enter a valid date (dd/mm/yy).');return}const isSun=isSundayDate(r.date);if(isSun){r.from='Sunday';r.to='Sunday'}else{if(!r.to||r.to==='Select city'){msg('Please select a destination city or status (To).');return}if(r.to==='Sunday'){msg('Sunday cannot be selected for a non-Sunday date.');return}r.from='Nagaur'}if(special.includes(r.to)){r.km='0';r.local=r.bus=r.fixed=r.hotel='0'}
+if(editing>=0){rows[editing]=r;}else{rows.push(r);}
+const now=new Date();
+const timeStr=pad(now.getDate())+'/'+pad(now.getMonth()+1)+'/'+String(now.getFullYear()).slice(2)+', '+now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+msg('Last updated: '+timeStr);
+rows.sort((a,b)=>a.date.localeCompare(b.date));saveToStorage();update();clearForm();};
+$('reset-form').onclick=()=>{clearForm();msg('Form cleared.')};$('cancel-edit').onclick=()=>{clearForm();msg('Edit cancelled.')};
+$('records').addEventListener('click',e=>{let b=e.target.closest('button');if(!b)return;let i=Number(b.dataset.edit??b.dataset.delete);if(b.dataset.edit!==undefined)setForm(rows[i],i);if(b.dataset.delete!==undefined){if(pendingDel===i){pendingDel=-1;rows.splice(i,1);saveToStorage();update();msg('Entry deleted.')}else{pendingDel=i;update();msg('Press Confirm to delete this entry.');setTimeout(()=>{if(pendingDel===i){pendingDel=-1;update();msg('Delete cancelled.')}},4000)}}});
+$('save-records').onclick=()=>{if(saveToStorage()){const now=new Date();msg('Records saved on '+pad(now.getDate())+'/'+pad(now.getMonth()+1)+'/'+String(now.getFullYear()).slice(2)+', '+now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})+'.')}};
+$('load-records').onclick=()=>loadFromStorage(true);
+$('month').onchange=()=>{loadFromStorage(false);clearForm();setDate(defDate());autoDay();msg('Showing records for '+monthLabel()+'.')};
+
+$('clear').onclick=()=>{const L='Clear this month\'s records';if(pendingClear){pendingClear=false;$('clear').textContent=L;rows=[];saveToStorage();update();clearForm();msg('This month’s records cleared.')}else{pendingClear=true;$('clear').textContent='Press again to confirm';setTimeout(()=>{pendingClear=false;$('clear').textContent=L},4000)}};
+function createRupeeBadgeDataUrl(bgColor = '#1d4ed8', textColor = '#ffffff', size = 80) {
+  try {
+    const c = document.createElement('canvas');
+    c.width = size;
+    c.height = size;
+    const ctx = c.getContext('2d');
+    if (!ctx) return null;
+    ctx.fillStyle = bgColor;
+    ctx.beginPath();
+    ctx.arc(size / 2, size / 2, size / 2 - 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = textColor;
+    ctx.font = 'bold ' + Math.round(size * 0.58) + 'px "Plus Jakarta Sans", system-ui, -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('₹', size / 2, size / 2 + size * 0.03);
+    return c.toDataURL('image/png');
+  } catch (e) {
+    return null;
+  }
+}
+
+function arrayBufferToBase64(buffer) {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+  const chunkSize = 16384;
+  for (let i = 0; i < len; i += chunkSize) {
+    const chunk = bytes.subarray(i, Math.min(i + chunkSize, len));
+    binary += String.fromCharCode.apply(null, chunk);
+  }
+  return btoa(binary);
+}
+
+function formatBytes(bytes) {
+  if (!bytes) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return (bytes / Math.pow(k, i)).toFixed(1) + ' ' + sizes[i];
+}
+
+async function deliverExportFile({ filename, mimeType, arrayBuffer, blob, isPdf, suppressModal = false }) {
+  msg('Preparing ' + filename + '...');
+  let base64 = '';
+  try {
+    base64 = arrayBufferToBase64(arrayBuffer);
+  } catch (convErr) {
+    console.error('Base64 conversion error:', convErr);
+  }
+
+  let downloadUrl = '';
+  if (base64) {
+    try {
+      const resp = await fetch('/api/download-temp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ base64, filename, mimeType })
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data && data.downloadUrl) {
+          downloadUrl = data.downloadUrl;
+        }
+      }
+    } catch (apiErr) {
+      console.warn('Backend download endpoint not reachable:', apiErr);
+    }
+  }
+
+  const blobUrl = blob ? URL.createObjectURL(blob) : '';
+  const finalFileUrl = downloadUrl || blobUrl;
+
+  // Native Android app: save to Downloads and open via the bridge
+  if (window.AndroidBridge && base64) {
+    try { window.AndroidBridge.saveFile(base64, filename, mimeType); } catch (bridgeErr) { console.warn(bridgeErr); }
+    return;
+  }
+
+  // 1. Post to host window (App.tsx) for Android WebView / top-window execution
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'DOWNLOAD_FILE',
+        url: downloadUrl || '',
+        filename,
+        mimeType,
+        base64
+      }, '*');
+    }
+  } catch (postErr) {
+    console.warn('Could not postMessage to parent:', postErr);
+  }
+
+  // 2. Configure and open interactive Export Modal
+  const modal = $('export-modal-backdrop');
+  if (modal) {
+    const iconBadge = $('modal-icon-badge');
+    if (iconBadge) {
+      iconBadge.textContent = isPdf ? '📄' : '📊';
+      iconBadge.style.background = isPdf ? '#fee2e2' : '#dcfce7';
+      iconBadge.style.borderColor = isPdf ? '#fca5a5' : '#86efac';
+    }
+    if ($('modal-file-title')) $('modal-file-title').textContent = isPdf ? 'PDF Ready' : 'Excel Ready';
+    if ($('modal-file-subtitle')) $('modal-file-subtitle').textContent = filename;
+    if ($('modal-file-size')) {
+      $('modal-file-size').textContent = (isPdf ? 'PDF • ' : 'Excel • ') + formatBytes(arrayBuffer.byteLength);
+    }
+
+    const dlBtn = $('modal-direct-download-btn');
+    if (dlBtn) {
+      dlBtn.href = finalFileUrl;
+      dlBtn.download = filename;
+      dlBtn.innerHTML = '<span>📥</span> <span>' + (isPdf ? 'Save as PDF (' + filename + ')' : 'Download Excel (' + filename + ')') + '</span>';
+      dlBtn.onclick = () => {
+        msg('Downloading ' + filename + '...');
+        if (/Android/i.test(navigator.userAgent) && downloadUrl) {
+          setTimeout(() => {
+            window.location.href = downloadUrl;
+          }, 300);
+        }
+      };
+    }
+
+    const shareBtn = $('modal-share-btn');
+    if (shareBtn) {
+      if (typeof navigator !== 'undefined' && (navigator.share || navigator.canShare)) {
+        shareBtn.style.display = 'flex';
+        shareBtn.innerHTML = '<span>📤</span> <span>' + (isPdf ? 'Open with Printer / PDF App' : 'Share File') + '</span>';
+        shareBtn.onclick = async () => {
+          try {
+            if (blob && navigator.canShare) {
+              const file = new File([blob], filename, { type: mimeType });
+              if (navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                  files: [file],
+                  title: filename,
+                  text: 'Monthly Expense Sheet - ' + monthLabel()
+                });
+                msg('Shared successfully (' + filename + ').');
+                return;
+              }
+            }
+            if (downloadUrl) {
+              await navigator.share({
+                title: filename,
+                text: 'Expense Sheet: ' + filename,
+                url: window.location.origin + downloadUrl
+              });
+              msg('Shared link successfully.');
+            }
+          } catch (shareErr) {
+            if (shareErr && shareErr.name !== 'AbortError') {
+              msg('Share not supported on this device. Use Download button.');
+            }
+          }
+        };
+      } else {
+        shareBtn.style.display = 'none';
+      }
+    }
+
+    const prevBtn = $('modal-preview-btn');
+    if (prevBtn) {
+      if (isPdf) {
+        prevBtn.style.display = 'flex';
+        prevBtn.innerHTML = '<span>🖨️</span> <span>Select Printer / Print Window</span>';
+        prevBtn.onclick = () => {
+          const printHtml = buildPrintHtml();
+          let w = null;
+          try { w = window.open('', '_blank'); } catch(e) {}
+          if (w) {
+            w.document.open();
+            w.document.write(printHtml);
+            w.document.close();
+            setTimeout(() => {
+              try { w.focus(); w.print(); } catch(e) {}
+            }, 300);
+          } else {
+            window.print();
+          }
+        };
+      } else {
+        prevBtn.style.display = 'none';
+      }
+    }
+
+    if (!suppressModal) {
+      modal.style.display = 'flex';
+      modal.setAttribute('aria-hidden', 'false');
+    }
+  }
+
+  // 3. Automatic download trigger for desktop & standard browsers
+  try {
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = finalFileUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      if (document.body.contains(a)) document.body.removeChild(a);
+    }, 2000);
+  } catch (aErr) {}
+
+  // 4. Android WebView native DownloadListener trigger
+  if (/Android/i.test(navigator.userAgent) && downloadUrl) {
+    setTimeout(() => {
+      window.location.href = downloadUrl;
+    }, 400);
+  }
+
+  msg('Export completed (' + filename + ').');
+}
+
+function buildPrintHtml() {
+  const sumKm = rows.reduce((a, r) => a + n(r.km), 0);
+  const sumLocal = rows.reduce((a, r) => a + n(r.local), 0);
+  const sumBus = rows.reduce((a, r) => a + n(r.bus), 0);
+  const sumFixed = rows.reduce((a, r) => a + n(r.fixed), 0);
+  const sumHotel = rows.reduce((a, r) => a + n(r.hotel), 0);
+  const grandTotal = rows.reduce((a, r) => a + total(r), 0);
+
+  let travelDays = 0;
+  rows.forEach(r => {
+    if (!special.includes(r.to) && !special.includes(r.from)) travelDays++;
+  });
+
+  const mName = monthLabel();
+  const empName = esc($('name').value || 'Tarun Sharma');
+  const srId = esc($('empid').value || 'IN13403');
+  const desig = esc($('designation').value || 'SR');
+  const head = esc($('head').value || 'Nagaur');
+
+  const rowsHtml = rows.length ? rows.map(r => {
+    const isSun = r.to === 'Sunday' || r.from === 'Sunday';
+    const fromTo = isSun
+      ? `<td colspan="2" style="font-weight:bold;color:#1d4ed8;background:#eff6ff;text-align:center;">Sunday</td>`
+      : `<td>${esc(r.from || 'Nagaur')}</td><td style="font-weight:600">${esc(r.to || '')}</td>`;
+    return `<tr>
+      <td style="font-family:monospace;font-weight:600;text-align:center;">${esc(fmt(r.date))}</td>
+      ${fromTo}
+      <td style="text-align:center">${Number(r.km) || 0}</td>
+      <td style="text-align:right">${n(r.local) ? String(n(r.local)) : '0'}</td>
+      <td style="text-align:right">${n(r.bus) ? String(n(r.bus)) : '0'}</td>
+      <td style="text-align:right">${n(r.fixed) ? String(n(r.fixed)) : '0'}</td>
+      <td style="text-align:right">${n(r.hotel) ? String(n(r.hotel)) : '0'}</td>
+      <td style="text-align:right;font-weight:bold;background:#eff6ff;">${total(r)}</td>
+      <td style="text-align:left">${esc(r.remark || '')}</td>
+    </tr>`;
+  }).join('') : `<tr><td colspan="10" style="padding:20px;text-align:center;color:#64748b;">No saved daily entries for this month.</td></tr>`;
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${mName}</title>
+<style>
+  @page {
+    size: A4 landscape;
+    margin: 8mm 10mm;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Calibri', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #000000;
+    margin: 0;
+    padding: 12px;
+    background: #ffffff;
+    font-size: 11px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .no-print-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: #1d4ed8;
+    color: #ffffff;
+    border-color: #1d4ed8;
+  }
+  .btn-outline {
+    background: #ffffff;
+    color: #334155;
+    border-color: #94a3b8;
+  }
+  @media print {
+    .no-print, .no-print-bar {
+      display: none !important;
+    }
+    body {
+      padding: 0;
+    }
+  }
+  .hdr-banner {
+    background: #1d4ed8 !important;
+    color: #ffffff;
+    text-align: center;
+    padding: 7px 12px;
+    border-radius: 4px;
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+  }
+  .hdr-sub {
+    text-align: center;
+    font-weight: 700;
+    font-size: 11.5px;
+    margin: 4px 0 8px;
+    letter-spacing: 0.5px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 4px;
+    font-size: 10px;
+  }
+  td, th {
+    border: 1px solid #000000;
+    padding: 4px 6px;
+    vertical-align: middle;
+  }
+  th {
+    background: #e2e8f0 !important;
+    font-weight: bold;
+    text-align: center;
+  }
+  .meta-td-lbl {
+    background: #f1f5f9 !important;
+    font-weight: bold;
+    width: 13%;
+  }
+  .meta-td-val {
+    width: 12%;
+  }
+  .total-row td {
+    background: #f1f5f9 !important;
+    font-weight: bold;
+  }
+  .total-highlight {
+    background: #dbeafe !important;
+    color: #1d4ed8 !important;
+    font-weight: bold;
+    font-size: 11px;
+  }
+  .grand-banner {
+    margin-top: 10px;
+    background: #eff6ff !important;
+    border: 1.5px solid #1d4ed8;
+    padding: 7px 12px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 12px;
+    color: #1d4ed8;
+  }
+  .sign-area {
+    margin-top: 26px;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 24px;
+    font-size: 10.5px;
+    font-weight: 700;
+  }
+  .sign-line {
+    width: 180px;
+    border-top: 1px solid #000000;
+    text-align: center;
+    padding-top: 4px;
+  }
+</style>
+</head>
+<body>
+<div class="no-print-bar">
+  <div>
+    <strong style="font-size:14px;color:#0f172a;">${mName} - Daily Travel Expenses Bill</strong>
+    <div style="font-size:12px;color:#64748b;">In the printer destination, select your printer or choose "Save as PDF".</div>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <button type="button" onclick="window.print()" class="btn btn-primary">🖨️ Print / Save as PDF</button>
+    <button type="button" onclick="window.close()" class="btn btn-outline">✕ Close</button>
+  </div>
+</div>
+
+<div class="hdr-banner">PRAN BEVERAGE INDIA PVT. LTD.</div>
+<div class="hdr-sub">DAILY TRAVEL EXPENSES BILL</div>
+
+<table style="margin-bottom:8px;">
+  <tr>
+    <td class="meta-td-lbl">Billing Month:</td><td class="meta-td-val">${mName}</td>
+    <td class="meta-td-lbl">Employee Name:</td><td class="meta-td-val" style="width:20%;">${empName}</td>
+    <td class="meta-td-lbl">SR ID:</td><td class="meta-td-val">${srId}</td>
+    <td class="meta-td-lbl">Designation:</td><td class="meta-td-val">${desig}</td>
+  </tr>
+  <tr>
+    <td class="meta-td-lbl">Head Office:</td><td class="meta-td-val">${head}</td>
+    <td class="meta-td-lbl">Travel Days:</td><td class="meta-td-val">${travelDays} days</td>
+    <td class="meta-td-lbl">Total Distance:</td><td class="meta-td-val">${sumKm} km</td>
+    <td class="meta-td-lbl" style="background:#dbeafe!important;">MONTHLY TOTAL:</td>
+    <td class="meta-td-val total-highlight" style="text-align:right;">Rs. ${grandTotal.toLocaleString('en-IN')} /-</td>
+  </tr>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:75px">Date</th>
+      <th style="width:85px">From</th>
+      <th style="width:85px">To</th>
+      <th style="width:65px">Distance (KM)</th>
+      <th style="width:95px">Local Conveyance (Rs.)</th>
+      <th style="width:95px">Train / Bus Fare (Rs.)</th>
+      <th style="width:85px">Fixed DA (Rs.)</th>
+      <th style="width:80px">Hotel Bill (Rs.)</th>
+      <th style="width:85px">Total (Rs.)</th>
+      <th>Remarks</th>
+    </tr>
+  </thead>
+  <tbody>
+    ${rowsHtml}
+  </tbody>
+  <tfoot>
+    <tr class="total-row">
+      <td colspan="3" style="text-align:right;">MONTHLY TOTAL</td>
+      <td style="text-align:center;">${sumKm}</td>
+      <td style="text-align:right;">${sumLocal}</td>
+      <td style="text-align:right;">${sumBus}</td>
+      <td style="text-align:right;">${sumFixed}</td>
+      <td style="text-align:right;">${sumHotel}</td>
+      <td class="total-highlight" style="text-align:right;">Rs. ${grandTotal.toLocaleString('en-IN')}</td>
+      <td></td>
+    </tr>
+  </tfoot>
+</table>
+
+<div class="grand-banner">
+  <span>TOTAL MONTHLY EXPENSES PAYABLE</span>
+  <span>Rs. ${grandTotal.toLocaleString('en-IN')} /-</span>
+</div>
+
+<div class="sign-area">
+  <div class="sign-line">Employee Signature</div>
+  <div class="sign-line">Authorized Signatory</div>
+</div>
+
+<script>
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    window.focus();
+    try { window.print(); } catch(e) {}
+  }, 250);
+});
+<\/script>
+</body>
+</html>`;
+}
+
+async function handlePrintOrSavePdf() {
+  const fileName = monthLabel() + '.pdf';
+  msg('Opening print / save PDF window for ' + monthLabel() + '...');
+
+  let printWin = null;
+  const printHtml = buildPrintHtml();
+
+  // Try opening new window synchronously on user tap
+  try {
+    printWin = window.open('', '_blank');
+  } catch (err) {
+    printWin = null;
+  }
+
+  // Also notify parent frame (App.tsx)
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'OPEN_PRINT_WINDOW',
+        title: monthLabel(),
+        html: printHtml
+      }, '*');
+    }
+  } catch (e) {}
+
+  if (printWin) {
+    try {
+      printWin.document.open();
+      printWin.document.write(printHtml);
+      printWin.document.close();
+      setTimeout(() => {
+        try {
+          printWin.focus();
+          printWin.print();
+        } catch (e) {}
+      }, 350);
+      msg('Print window opened for ' + monthLabel() + '. Select printer or Save as PDF.');
+    } catch (writeErr) {
+      console.warn('Could not write to new window:', writeErr);
+      printWin = null;
+    }
+  }
+
+  // Also generate the high-res PDF and prepare download / Android share
+  await generateAndSavePDF(Boolean(printWin));
+}
+
+async function generateAndSavePDF(hasOpenedWindow = false) {
+  const sumKm = rows.reduce((a, r) => a + n(r.km), 0);
+  const sumLocal = rows.reduce((a, r) => a + n(r.local), 0);
+  const sumBus = rows.reduce((a, r) => a + n(r.bus), 0);
+  const sumFixed = rows.reduce((a, r) => a + n(r.fixed), 0);
+  const sumHotel = rows.reduce((a, r) => a + n(r.hotel), 0);
+  const grandTotal = rows.reduce((a, r) => a + total(r), 0);
+
+  let travelDays = 0, holidays = 0, leaves = 0;
+  rows.forEach(r => {
+    if (!special.includes(r.to) && !special.includes(r.from)) travelDays++;
+    if (r.to === 'Holiday' || r.from === 'Holiday') holidays++;
+    if (r.to === 'Leave' || r.from === 'Leave') leaves++;
+  });
+
+  const fileName = monthLabel() + '.pdf';
+  const jsPDFClass = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+
+  if (jsPDFClass) {
+    try {
+      const doc = new jsPDFClass({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const rupeeBadgeUrl = createRupeeBadgeDataUrl('#1d4ed8', '#ffffff', 80);
+
+      // Top Header Banner with Rupee Logo Badge
+      doc.setFillColor(29, 78, 216);
+      doc.rect(10, 8, pageWidth - 20, 11, 'F');
+      if (rupeeBadgeUrl) {
+        try {
+          doc.addImage(rupeeBadgeUrl, 'PNG', 13, 9, 9, 9);
+        } catch (imgErr) {}
+      }
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.setTextColor(255, 255, 255);
+      doc.text('PRAN BEVERAGE INDIA PVT. LTD.', pageWidth / 2, 15.5, { align: 'center' });
+
+      // Subtitle
+      doc.setFontSize(10.5);
+      doc.setTextColor(0, 0, 0);
+      doc.text('DAILY TRAVEL EXPENSES BILL', pageWidth / 2, 24, { align: 'center' });
+
+      const callAutoTable = (options) => {
+        if (typeof doc.autoTable === 'function') {
+          doc.autoTable(options);
+        } else if (typeof window.autoTable === 'function') {
+          window.autoTable(doc, options);
+        }
+      };
+
+      // Metadata summary table with sharp borders & clearly visible Total
+      const metaBody = [
+        [
+          { content: 'Billing Month:', styles: { fontStyle: 'bold', fillColor: [241, 245, 249] } },
+          monthLabel(),
+          { content: 'Employee Name:', styles: { fontStyle: 'bold', fillColor: [241, 245, 249] } },
+          $('name').value || 'Tarun Sharma',
+          { content: 'SR ID:', styles: { fontStyle: 'bold', fillColor: [241, 245, 249] } },
+          $('empid').value || 'IN13403',
+          { content: 'Designation:', styles: { fontStyle: 'bold', fillColor: [241, 245, 249] } },
+          $('designation').value || 'SR'
+        ],
+        [
+          { content: 'Head Office:', styles: { fontStyle: 'bold', fillColor: [241, 245, 249] } },
+          $('head').value || 'Nagaur',
+          { content: 'Travel Days:', styles: { fontStyle: 'bold', fillColor: [241, 245, 249] } },
+          travelDays + (travelDays === 1 ? ' day' : ' days'),
+          { content: 'Total Distance:', styles: { fontStyle: 'bold', fillColor: [241, 245, 249] } },
+          sumKm.toLocaleString('en-IN') + ' km',
+          { content: 'MONTHLY TOTAL:', styles: { fontStyle: 'bold', fillColor: [219, 234, 254], textColor: [0, 0, 0], fontSize: 9.5 } },
+          { content: 'Rs. ' + grandTotal.toLocaleString('en-IN') + ' /-', styles: { fontStyle: 'bold', fontSize: 10.5, textColor: [29, 78, 216], fillColor: [239, 246, 255] } }
+        ]
+      ];
+
+      callAutoTable({
+        startY: 27,
+        margin: { left: 10, right: 10 },
+        theme: 'grid',
+        styles: {
+          fontSize: 9,
+          cellPadding: 2.2,
+          lineColor: [0, 0, 0],
+          lineWidth: 0.25,
+          textColor: [0, 0, 0],
+          valign: 'middle'
+        },
+        body: metaBody
+      });
+
+      const tableStartY = (doc.lastAutoTable && doc.lastAutoTable.finalY ? doc.lastAutoTable.finalY : 42) + 4;
+
+      const headers = [
+        ['Date', 'From', 'To', 'Distance (KM)', 'Local Conveyance (Rs.)', 'Train / Bus Fare (Rs.)', 'Fixed DA (Rs.)', 'Hotel Bill (Rs.)', 'Total (Rs.)', 'Remarks']
+      ];
+
+      const dataRows = rows.map(r => {
+        const isSun = r.to === 'Sunday' || r.from === 'Sunday';
+        if (isSun) {
+          return [
+            fmt(r.date),
+            { colSpan: 2, content: 'Sunday', styles: { halign: 'center', fontStyle: 'bold', textColor: [29, 78, 216], fillColor: [239, 246, 255] } },
+            Number(r.km) || 0,
+            n(r.local) ? String(n(r.local)) : '0',
+            n(r.bus) ? String(n(r.bus)) : '0',
+            n(r.fixed) ? String(n(r.fixed)) : '0',
+            n(r.hotel) ? String(n(r.hotel)) : '0',
+            { content: String(total(r)), styles: { fontStyle: 'bold', textColor: [0, 0, 0] } },
+            r.remark || ''
+          ];
+        }
+        return [
+          fmt(r.date),
+          r.from || 'Nagaur',
+          r.to || '',
+          Number(r.km) || 0,
+          n(r.local) ? String(n(r.local)) : '0',
+          n(r.bus) ? String(n(r.bus)) : '0',
+          n(r.fixed) ? String(n(r.fixed)) : '0',
+          n(r.hotel) ? String(n(r.hotel)) : '0',
+          { content: String(total(r)), styles: { fontStyle: 'bold', textColor: [0, 0, 0] } },
+          r.remark || ''
+        ];
+      });
+
+      const footRows = [
+        [
+          { colSpan: 3, content: 'MONTHLY TOTAL', styles: { halign: 'right', fontStyle: 'bold', fillColor: [226, 232, 240], textColor: [0, 0, 0], fontSize: 9 } },
+          { content: String(sumKm), styles: { fontStyle: 'bold', halign: 'center', fillColor: [241, 245, 249], textColor: [0, 0, 0] } },
+          { content: String(sumLocal), styles: { fontStyle: 'bold', halign: 'right', fillColor: [241, 245, 249], textColor: [0, 0, 0] } },
+          { content: String(sumBus), styles: { fontStyle: 'bold', halign: 'right', fillColor: [241, 245, 249], textColor: [0, 0, 0] } },
+          { content: String(sumFixed), styles: { fontStyle: 'bold', halign: 'right', fillColor: [241, 245, 249], textColor: [0, 0, 0] } },
+          { content: String(sumHotel), styles: { fontStyle: 'bold', halign: 'right', fillColor: [241, 245, 249], textColor: [0, 0, 0] } },
+          { content: 'Rs. ' + grandTotal.toLocaleString('en-IN'), styles: { fontStyle: 'bold', fontSize: 9.5, halign: 'right', textColor: [0, 0, 0], fillColor: [219, 234, 254] } },
+          { content: '', styles: { fillColor: [241, 245, 249] } }
+        ]
+      ];
+
+      callAutoTable({
+        startY: tableStartY,
+        margin: { left: 10, right: 10, bottom: 20 },
+        head: headers,
+        body: dataRows.length ? dataRows : [['No saved daily entries', '', '', '', '', '', '', '', '', '']],
+        foot: footRows,
+        theme: 'grid',
+        showFoot: 'everyPage',
+        styles: {
+          fontSize: 8.5,
+          cellPadding: 2.2,
+          lineWidth: 0.25,
+          lineColor: [0, 0, 0],
+          textColor: [0, 0, 0],
+          valign: 'middle'
+        },
+        headStyles: {
+          fillColor: [226, 232, 240],
+          textColor: [0, 0, 0],
+          fontStyle: 'bold',
+          halign: 'center',
+          lineWidth: 0.35,
+          lineColor: [0, 0, 0],
+          fontSize: 8.5
+        },
+        footStyles: {
+          halign: 'center',
+          textColor: [0, 0, 0],
+          lineWidth: 0.35,
+          lineColor: [0, 0, 0]
+        },
+        columnStyles: {
+          0: { cellWidth: 22, halign: 'center' },
+          1: { cellWidth: 24, halign: 'center' },
+          2: { cellWidth: 24, halign: 'center' },
+          3: { cellWidth: 20, halign: 'center' },
+          4: { cellWidth: 28, halign: 'right' },
+          5: { cellWidth: 28, halign: 'right' },
+          6: { cellWidth: 28, halign: 'right' },
+          7: { cellWidth: 24, halign: 'right' },
+          8: { cellWidth: 29, halign: 'right' },
+          9: { cellWidth: 50, halign: 'left' }
+        }
+      });
+
+      const finalY = doc.lastAutoTable.finalY + 4;
+      if (finalY + 13 < pageHeight - 16) {
+        doc.setFillColor(239, 246, 255);
+        doc.setDrawColor(29, 78, 216);
+        doc.setLineWidth(0.35);
+        doc.rect(10, finalY, pageWidth - 20, 10, 'FD');
+        if (rupeeBadgeUrl) {
+          try {
+            doc.addImage(rupeeBadgeUrl, 'PNG', 14, finalY + 1.2, 7.6, 7.6);
+          } catch (e) {}
+        }
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10);
+        doc.setTextColor(29, 78, 216);
+        doc.text('TOTAL MONTHLY EXPENSES PAYABLE:   Rs. ' + grandTotal.toLocaleString('en-IN') + ' /-', rupeeBadgeUrl ? 24 : 14, finalY + 6.6);
+      }
+
+      const totalPages = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        doc.setFontSize(7.5);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(71, 85, 105);
+        doc.text('Page ' + i + ' of ' + totalPages, pageWidth - 10, pageHeight - 6, { align: 'right' });
+        doc.text('Tarun Sharma - PRAN BEVERAGE INDIA PVT. LTD.', 10, pageHeight - 6);
+
+        if (i === totalPages) {
+          const signY = pageHeight - 11;
+          doc.setFontSize(8);
+          doc.setTextColor(0, 0, 0);
+          doc.setDrawColor(0, 0, 0);
+          doc.setLineWidth(0.25);
+          doc.line(10, signY - 2, 60, signY - 2);
+          doc.text('Employee Signature', 10, signY + 2);
+          doc.line(pageWidth - 70, signY - 2, pageWidth - 10, signY - 2);
+          doc.text('Authorized Signatory', pageWidth - 70, signY + 2);
+        }
+      }
+
+      const arrayBuffer = doc.output('arraybuffer');
+      const pdfBlob = new Blob([arrayBuffer], { type: 'application/pdf' });
+      await deliverExportFile({
+        filename: fileName,
+        mimeType: 'application/pdf',
+        arrayBuffer: arrayBuffer,
+        blob: pdfBlob,
+        isPdf: true,
+        suppressModal: hasOpenedWindow
+      });
+      return;
+    } catch (pdfErr) {
+      console.error('jsPDF generation error:', pdfErr);
+      msg('Error creating PDF: ' + (pdfErr.message || pdfErr));
+    }
+  }
+
+  // Fallback if jsPDF is unavailable
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'PRINT_WINDOW' }, '*');
+    }
+    window.focus();
+    window.print();
+    msg('Print dialog opened.');
+  } catch (err) {
+    msg('Printing is not supported in this environment.');
+  }
+}
+
+$('print').onclick = handlePrintOrSavePdf;
+async function exportExcelWithBorders(){
+  const sumKm=rows.reduce((a,r)=>a+n(r.km),0);
+  const sumLocal=rows.reduce((a,r)=>a+n(r.local),0);
+  const sumBus=rows.reduce((a,r)=>a+n(r.bus),0);
+  const sumFixed=rows.reduce((a,r)=>a+n(r.fixed),0);
+  const sumHotel=rows.reduce((a,r)=>a+n(r.hotel),0);
+  const grandTotal=rows.reduce((a,r)=>a+total(r),0);
+  const fileName = monthLabel() + '.xlsx';
+
+  if (window.ExcelJS) {
+    try {
+      const wb = new window.ExcelJS.Workbook();
+      wb.creator = 'PRAN BEVERAGE INDIA PVT. LTD.';
+      const ws = wb.addWorksheet('Daily Expenses', { views: [{ showGridLines: true }] });
+
+      ws.columns = [
+        { key: 'c1', width: 14 },
+        { key: 'c2', width: 14 },
+        { key: 'c3', width: 14 },
+        { key: 'c4', width: 15 },
+        { key: 'c5', width: 22 },
+        { key: 'c6', width: 20 },
+        { key: 'c7', width: 20 },
+        { key: 'c8', width: 16 },
+        { key: 'c9', width: 16 },
+        { key: 'c10', width: 24 }
+      ];
+
+      const thinBorder = {
+        top: { style: 'thin', color: { argb: 'FF000000' } },
+        left: { style: 'thin', color: { argb: 'FF000000' } },
+        bottom: { style: 'thin', color: { argb: 'FF000000' } },
+        right: { style: 'thin', color: { argb: 'FF000000' } }
+      };
+
+      function styleCell(cell, bgArgb, isBold, align) {
+        cell.border = thinBorder;
+        if (bgArgb) {
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: bgArgb } };
+        }
+        cell.font = { name: 'Calibri', size: 10, bold: Boolean(isBold) };
+        cell.alignment = { vertical: 'middle', horizontal: align || 'center', wrapText: true };
+      }
+
+      function styleRowRange(rowNum, startCol, endCol, bgArgb, isBold, align) {
+        for (let c = startCol; c <= endCol; c++) {
+          styleCell(ws.getRow(rowNum).getCell(c), bgArgb, isBold, align);
+        }
+      }
+
+      // Row 1: Title
+      const r1 = ws.getRow(1);
+      r1.height = 28;
+      r1.getCell(1).value = 'PRAN BEVERAGE INDIA PVT. LTD.';
+      ws.mergeCells('A1:J1');
+      styleRowRange(1, 1, 10, 'FF1D4ED8', true, 'center');
+      r1.getCell(1).font = { name: 'Calibri', size: 14, bold: true, color: { argb: 'FFFFFFFF' } };
+
+      // Row 2: Subtitle
+      const r2 = ws.getRow(2);
+      r2.height = 22;
+      r2.getCell(1).value = 'DAILY TRAVEL EXPENSES BILL';
+      ws.mergeCells('A2:J2');
+      styleRowRange(2, 1, 10, 'FFF1F5F9', true, 'center');
+      r2.getCell(1).font = { name: 'Calibri', size: 11, bold: true, color: { argb: 'FF0F172A' } };
+
+      // Row 3: Metadata
+      const r3 = ws.getRow(3);
+      r3.height = 22;
+      r3.getCell(1).value = 'Billing Month:';
+      r3.getCell(2).value = monthLabel();
+      r3.getCell(3).value = 'Employee Name:';
+      r3.getCell(4).value = $('name').value;
+      ws.mergeCells('D3:E3');
+      r3.getCell(6).value = 'SR ID:';
+      r3.getCell(7).value = $('empid').value;
+      r3.getCell(8).value = 'Designation:';
+      r3.getCell(9).value = $('designation').value;
+      ws.mergeCells('I3:J3');
+
+      styleCell(r3.getCell(1), 'FFF8FAFC', true);
+      styleCell(r3.getCell(2), null, false);
+      styleCell(r3.getCell(3), 'FFF8FAFC', true);
+      styleCell(r3.getCell(4), null, false);
+      styleCell(r3.getCell(5), null, false);
+      styleCell(r3.getCell(6), 'FFF8FAFC', true);
+      styleCell(r3.getCell(7), null, false);
+      styleCell(r3.getCell(8), 'FFF8FAFC', true);
+      styleCell(r3.getCell(9), null, false);
+      styleCell(r3.getCell(10), null, false);
+
+      // Row 4: Head office
+      const r4 = ws.getRow(4);
+      r4.height = 22;
+      r4.getCell(1).value = 'Head Office:';
+      r4.getCell(2).value = $('head').value;
+      ws.mergeCells('C4:J4');
+      styleCell(r4.getCell(1), 'FFF8FAFC', true);
+      styleCell(r4.getCell(2), null, false);
+      for (let c = 3; c <= 10; c++) styleCell(r4.getCell(c), null, false);
+
+      // Row 5: Spacer (No borders)
+      ws.getRow(5).height = 8;
+
+      // Row 6: Column headers
+      const headers = ['Date', 'From', 'To', 'Distance (KM)', 'Local Conveyance (INR)', 'Train / Bus Fare (INR)', 'Outstation Fixed DA (INR)', 'Hotel Bill (INR)', 'Total (INR)', 'Remarks'];
+      const r6 = ws.getRow(6);
+      r6.height = 24;
+      headers.forEach((h, idx) => {
+        const cell = r6.getCell(idx + 1);
+        cell.value = h;
+        styleCell(cell, 'FFE2E8F0', true, 'center');
+      });
+
+      // Data rows
+      let currentRowNum = 7;
+      rows.forEach(r => {
+        const row = ws.getRow(currentRowNum);
+        row.height = 20;
+        const isSun = r.to === 'Sunday' || r.from === 'Sunday';
+
+        row.getCell(1).value = fmt(r.date);
+        styleCell(row.getCell(1), null, false);
+
+        if (isSun) {
+          row.getCell(2).value = 'Sunday';
+          ws.mergeCells(`B${currentRowNum}:C${currentRowNum}`);
+          styleCell(row.getCell(2), 'FFEFF6FF', true, 'center');
+          row.getCell(2).font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FF1D4ED8' } };
+          styleCell(row.getCell(3), 'FFEFF6FF', true, 'center');
+        } else {
+          row.getCell(2).value = r.from;
+          row.getCell(3).value = r.to;
+          styleCell(row.getCell(2), null, false);
+          styleCell(row.getCell(3), null, true);
+        }
+
+        row.getCell(4).value = Number(r.km) || 0;
+        styleCell(row.getCell(4), null, false);
+
+        row.getCell(5).value = n(r.local);
+        styleCell(row.getCell(5), null, false);
+
+        row.getCell(6).value = n(r.bus);
+        styleCell(row.getCell(6), null, false);
+
+        row.getCell(7).value = n(r.fixed);
+        styleCell(row.getCell(7), null, false);
+
+        row.getCell(8).value = n(r.hotel);
+        styleCell(row.getCell(8), null, false);
+
+        row.getCell(9).value = total(r);
+        styleCell(row.getCell(9), 'FFEFF6FF', true);
+
+        row.getCell(10).value = r.remark || '';
+        styleCell(row.getCell(10), null, false, 'left');
+
+        currentRowNum++;
+      });
+
+      // Total row
+      const totalRow = ws.getRow(currentRowNum);
+      totalRow.height = 24;
+      totalRow.getCell(1).value = 'MONTHLY TOTAL';
+      ws.mergeCells(`A${currentRowNum}:C${currentRowNum}`);
+      styleCell(totalRow.getCell(1), 'FFEFF6FF', true, 'right');
+      styleCell(totalRow.getCell(2), 'FFEFF6FF', true, 'right');
+      styleCell(totalRow.getCell(3), 'FFEFF6FF', true, 'right');
+
+      totalRow.getCell(4).value = sumKm;
+      styleCell(totalRow.getCell(4), 'FFEFF6FF', true);
+
+      totalRow.getCell(5).value = sumLocal;
+      styleCell(totalRow.getCell(5), 'FFEFF6FF', true);
+
+      totalRow.getCell(6).value = sumBus;
+      styleCell(totalRow.getCell(6), 'FFEFF6FF', true);
+
+      totalRow.getCell(7).value = sumFixed;
+      styleCell(totalRow.getCell(7), 'FFEFF6FF', true);
+
+      totalRow.getCell(8).value = sumHotel;
+      styleCell(totalRow.getCell(8), 'FFEFF6FF', true);
+
+      totalRow.getCell(9).value = grandTotal;
+      styleCell(totalRow.getCell(9), 'FFDBEAFE', true);
+      totalRow.getCell(9).font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FF1D4ED8' } };
+
+      totalRow.getCell(10).value = '';
+      styleCell(totalRow.getCell(10), 'FFEFF6FF', false);
+
+      const buffer = await wb.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      });
+      await deliverExportFile({
+        filename: fileName,
+        mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        arrayBuffer: buffer,
+        blob: blob,
+        isPdf: false
+      });
+      return;
+    } catch (e) {
+      console.error('ExcelJS generation error:', e);
+      msg('ExcelJS error, using table fallback...');
+    }
+  }
+
+  // Pure HTML table fallback strictly constrained to 10 columns A-J (no border bleeding past Col J)
+  const fallbackHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">
+<head><meta charset="utf-8">
+<style>
+  table { border-collapse: collapse; font-family: Calibri, Arial, sans-serif; font-size: 11pt; table-layout: fixed; width: 920px; }
+  td, th { border: 1px solid #000000; padding: 6px 10px; text-align: center; }
+  .hdr-main { font-size: 14pt; font-weight: bold; background-color: #1d4ed8; color: #ffffff; }
+  .hdr-sub { font-size: 11pt; font-weight: bold; background-color: #f1f5f9; }
+  .meta-lbl { font-weight: bold; background-color: #f8fafc; }
+  .col-head { background-color: #e2e8f0; font-weight: bold; font-size: 10pt; }
+  .total-row { font-weight: bold; background-color: #eff6ff; }
+</style>
+</head>
+<body>
+<table style="border-collapse: collapse; table-layout: fixed; width: 920px;">
+  <colgroup>
+    <col width="85"><col width="85"><col width="90"><col width="70"><col width="110"><col width="110"><col width="110"><col width="90"><col width="90"><col width="120">
+  </colgroup>
+  <tr><td colspan="10" class="hdr-main">PRAN BEVERAGE INDIA PVT. LTD.</td></tr>
+  <tr><td colspan="10" class="hdr-sub">DAILY TRAVEL EXPENSES BILL</td></tr>
+  <tr>
+    <td class="meta-lbl">Billing Month:</td><td>${monthLabel()}</td>
+    <td class="meta-lbl">Employee Name:</td><td colspan="2">${esc($('name').value)}</td>
+    <td class="meta-lbl">SR ID:</td><td>${esc($('empid').value)}</td>
+    <td class="meta-lbl">Designation:</td><td colspan="2">${esc($('designation').value)}</td>
+  </tr>
+  <tr>
+    <td class="meta-lbl">Head Office:</td><td>${esc($('head').value)}</td>
+    <td colspan="8"></td>
+  </tr>
+  <tr><td colspan="10" style="height:8px;border:none;"></td></tr>
+  <tr class="col-head">
+    <th>Date</th><th>From</th><th>To</th><th>Distance (KM)</th><th>Local Conveyance (INR)</th><th>Train / Bus Fare (INR)</th><th>Outstation Fixed DA (INR)</th><th>Hotel Bill (INR)</th><th>Total (INR)</th><th>Remarks</th>
+  </tr>
+  ${rows.map(r=>{const isSun=r.to==='Sunday'||r.from==='Sunday';const fromToCells=isSun?`<td colspan="2" style="font-weight:bold;color:#1d4ed8;background:#eff6ff;">Sunday</td>`:`<td>${esc(r.from)}</td><td>${esc(r.to)}</td>`;return `<tr>
+    <td>${esc(fmt(r.date))}</td>
+    ${fromToCells}
+    <td>${Number(r.km)||0}</td>
+    <td>${n(r.local)}</td>
+    <td>${n(r.bus)}</td>
+    <td>${n(r.fixed)}</td>
+    <td>${n(r.hotel)}</td>
+    <td style="font-weight:bold;background:#eff6ff;">${total(r)}</td>
+    <td>${esc(r.remark||'')}</td>
+  </tr>`}).join('')}
+  <tr class="total-row">
+    <td colspan="3" style="text-align:right;font-weight:bold;">MONTHLY TOTAL</td>
+    <td>${sumKm}</td>
+    <td>${sumLocal}</td>
+    <td>${sumBus}</td>
+    <td>${sumFixed}</td>
+    <td>${sumHotel}</td>
+    <td style="font-weight:bold;background:#dbeafe;color:#1d4ed8;">${grandTotal}</td>
+    <td></td>
+  </tr>
+</table>
+</body></html>`;
+  const blob = new Blob(['\ufeff' + fallbackHtml], { type: 'application/vnd.ms-excel;charset=utf-8' });
+  const arrayBuffer = await blob.arrayBuffer();
+  await deliverExportFile({
+    filename: monthLabel() + '.xls',
+    mimeType: 'application/vnd.ms-excel',
+    arrayBuffer: arrayBuffer,
+    blob: blob,
+    isPdf: false
+  });
+}
+if ($('excel')) $('excel').onclick = exportExcelWithBorders;
+
+if ($('modal-close-btn')) {
+  $('modal-close-btn').onclick = () => {
+    $('export-modal-backdrop').style.display = 'none';
+    $('export-modal-backdrop').setAttribute('aria-hidden', 'true');
+  };
+}
+if ($('modal-dismiss-btn')) {
+  $('modal-dismiss-btn').onclick = () => {
+    $('export-modal-backdrop').style.display = 'none';
+    $('export-modal-backdrop').setAttribute('aria-hidden', 'true');
+  };
+}
+if ($('export-modal-backdrop')) {
+  $('export-modal-backdrop').onclick = (e) => {
+    if (e.target === $('export-modal-backdrop')) {
+      $('export-modal-backdrop').style.display = 'none';
+      $('export-modal-backdrop').setAttribute('aria-hidden', 'true');
+    }
+  };
+}
+
+loadFromStorage(false);clearForm();update();
+})();
+</script>
+</body>
+</html>
